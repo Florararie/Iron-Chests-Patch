@@ -1,0 +1,7 @@
+{
+  "parent": "ironchestpatch:block/chest/template",
+  "textures": {
+    "chest": "ironchestpatch:block/chest_emerald",
+    "particle": "minecraft:block/emerald_block"
+  }
+}

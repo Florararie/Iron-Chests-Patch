@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"id": "ironchest-polymer-patch",
+	"version": "${version}",
+	"name": "Polymer Patch for Iron Chests",
+	"description": "Server-side-only Iron Chests: virtualises its chests, items, block entities and menus so unmodded clients can see and use them.",
+	"license": "MIT",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"eu.pb4.ironchestpatch.IronChestsPolymerPatch"
+		]
+	},
+	"mixins": [
+		"ironchest-polymer-patch.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.1",
+		"java": ">=25",
+		"fabric-api": "*",
+		"polymer-core": ">=0.16.0",
+		"polymer-resource-pack": ">=0.16.0",
+		"ironchest": ">=3.0.0",
+		"ironcore": ">=1.0.0"
+	}
+}

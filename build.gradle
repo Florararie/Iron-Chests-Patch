@@ -1,0 +1,67 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    maven { url = 'https://maven.nucleoid.xyz' }
+    maven { url = 'https://cursemaven.com' }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    // Minecraft 26.x ships unobfuscated; no mappings declaration is needed or allowed.
+
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    implementation "eu.pb4:polymer-core:${project.polymer_version}"
+    implementation "eu.pb4:polymer-resource-pack:${project.polymer_version}"
+
+    // The mods being patched; not bundled, only used for compilation.
+    compileOnly "curse.maven:iron-chests-498534:${project.ironchests_file_id}"
+    compileOnly "curse.maven:iron-core-utilities-${project.ironcore_project_id}:${project.ironcore_file_id}"
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 25
+}
+
+java {
+    withSourcesJar()
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+jar {
+    inputs.property "archivesName", project.base.archivesName
+
+    from("LICENSE") {
+        rename { "${it}_${inputs.properties.archivesName}" }
+    }
+}
+
+publishing {
+    publications {
+        create("mavenJava", MavenPublication) {
+            artifactId = project.archives_base_name
+            from components.java
+        }
+    }
+    repositories {}
+}
