@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -35,10 +36,21 @@ public final class CoreItems {
             Map.entry("hand_truck", Items.MINECART),
             Map.entry("enhanced_hand_truck", Items.CHEST_MINECART));
 
+    /**
+     * Items that need this patch's own item model definition rather than the vanilla item's model.
+     *
+     * <p>Iron Core defines the hand truck models as a {@code minecraft:condition} on the
+     * {@code ironcore:carried_block} component. An unmodded client has no such component, cannot
+     * evaluate the condition, and draws nothing, so the pack ships a plain definition instead.
+     */
+    private static final Map<String, Identifier> CLIENT_MODELS = Map.of(
+            "hand_truck", Identifier.fromNamespaceAndPath("ironchestpatch", "hand_truck"),
+            "enhanced_hand_truck", Identifier.fromNamespaceAndPath("ironchestpatch", "enhanced_hand_truck"));
+
     private CoreItems() {}
 
     public static PolyCoreItem create(String id) {
-        return new PolyCoreItem(CLIENT_ITEMS.get(id), name(id), lore(id));
+        return new PolyCoreItem(CLIENT_ITEMS.get(id), CLIENT_MODELS.get(id), name(id), lore(id));
     }
 
     private static String name(String id) {

@@ -15,6 +15,6 @@ public class ModCoreItemGroupMixin {
     @Inject(method = "registerItemGroup", at = @At("TAIL"))
     private static void polymer$creativeTab(CallbackInfo ci) {
         CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.getValue(IronCoreCommon.TAB.identifier());
-        PolymerTabs.hideAndServe(tab);
+        PolymerTabs.track(tab);
     }
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -20,8 +21,10 @@ public final class ChestItems {
         if (trait != null) {
             lore.add(Component.literal(trait).withStyle(ChatFormatting.DARK_GRAY));
         }
-        // Vanilla clients only have one chest icon, so tiers are distinguished by name and lore.
-        return new PolyChestItem(Items.CHEST, name(type), List.copyOf(lore));
+        // The client sees a vanilla chest item wearing the tier's own model from the pack, so the
+        // icon is the real chest art even though the sent item is minecraft:chest.
+        Identifier model = Identifier.fromNamespaceAndPath("ironchest", type.registryId);
+        return new PolyChestItem(Items.CHEST, model, name(type), List.copyOf(lore));
     }
 
     public static String name(ChestTypes type) {

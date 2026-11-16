@@ -9,6 +9,7 @@ import net.minecraft.world.item.Items;
 public final class LegacyUpgradeClient {
     public static final PolyCoreItem INSTANCE = new PolyCoreItem(
             Items.PAPER,
+            null,
             "Legacy Chest Upgrade",
             List.of(Component.literal("Converts on pickup").withStyle(ChatFormatting.GRAY)));
 

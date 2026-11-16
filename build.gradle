@@ -23,6 +23,7 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
     implementation "eu.pb4:polymer-core:${project.polymer_version}"
     implementation "eu.pb4:polymer-resource-pack:${project.polymer_version}"
+    implementation "eu.pb4:polymer-virtual-entity:${project.polymer_version}"
 
     // The mods being patched; not bundled, only used for compilation.
     compileOnly "curse.maven:iron-chests-498534:${project.ironchests_file_id}"

@@ -4,6 +4,7 @@ import com.gathertocraft.ironchest.blocks.ChestTypes;
 import com.gathertocraft.ironchest.registry.ModBlocks;
 import eu.pb4.ironchestpatch.impl.PolyChestBlock;
 import eu.pb4.polymer.core.api.block.PolymerBlock;
+import eu.pb4.polymer.virtualentity.api.BlockWithElementHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,7 +17,10 @@ public class ModBlocksMixin {
     @Inject(method = "registerBlocks", at = @At("TAIL"))
     private static void polymer$overlayBlocks(CallbackInfo ci) {
         for (ChestTypes type : ChestTypes.PLAYABLE) {
-            PolymerBlock.registerOverlay(type.getBlock(), new PolyChestBlock(type));
+            PolyChestBlock overlay = new PolyChestBlock(type);
+            // One overlay for the client block state and one for the display entity that draws the chest.
+            PolymerBlock.registerOverlay(type.getBlock(), overlay);
+            BlockWithElementHolder.registerOverlay(type.getBlock(), overlay);
         }
     }
 }

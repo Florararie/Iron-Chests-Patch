@@ -4,9 +4,7 @@ A server-side [Polymer](https://modrinth.com/mod/polymer) patch for [Iron Chests
 
 ## What it does
 
-The chests stay real Iron Chests blocks, items and block entities on the server. Polymer sends each one to the client as a note block whose unused `custom_head` states select the tier and facing, and the bundled pack supplies a chest model and texture for every tier. Lock checks, upgrades, hand trucks, recipes and loot all run through the mod as before.
-
-Items appear on the client as vanilla icons named for the tier, with capacity and traits in the lore. Upgrades and keys get matching stand-ins.
+Chests are a virtual display entity using the barrier block as a donor.
 
 ## Chest screens
 
@@ -30,11 +28,6 @@ The jar lands in `build/libs/`. The patched mods come from CurseForge's maven; t
 
 ## Notes
 
-- No lid animation or chest sound for unmodded clients.
-- The note block carrier gives chests a full-block collision shape and outline; the model is slightly inset.
-- A note block tuned to the same `custom_head` states would also look like a chest.
 - The crystal chest's contents are not visible.
-- Locking works server-side. The key editor only opens for clients with Iron Core; others get a chat hint.
-- Clients that install Iron Chests also see the virtualised chests.
 
 Chest art comes from Iron Chests. This patch is MIT licensed; see `LICENSE`.

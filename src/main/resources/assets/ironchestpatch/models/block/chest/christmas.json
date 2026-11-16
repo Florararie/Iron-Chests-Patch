@@ -1,7 +1,0 @@
-{
-  "parent": "ironchestpatch:block/chest/template",
-  "textures": {
-    "chest": "ironchestpatch:block/chest_christmas",
-    "particle": "minecraft:block/red_wool"
-  }
-}

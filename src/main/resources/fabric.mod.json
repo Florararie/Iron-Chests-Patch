@@ -21,6 +21,7 @@
 		"fabric-api": "*",
 		"polymer-core": ">=0.16.0",
 		"polymer-resource-pack": ">=0.16.0",
+		"polymer-virtual-entity": ">=0.16.0",
 		"ironchest": ">=3.0.0",
 		"ironcore": ">=1.0.0"
 	}
