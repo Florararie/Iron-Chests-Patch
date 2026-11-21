@@ -4,7 +4,7 @@ A server-side [Polymer](https://modrinth.com/mod/polymer) patch for [Iron Chests
 
 ## What it does
 
-Chests are a virtual display entity using the barrier block as a donor.
+Chests are a virtual display entity. The block clients see is a single waxed copper chest, which gives them a chest's collision box and its fluid state, so they collide exactly like chests and show water around them when waterlogged; the pack blanks that one sprite so the client's own chest draws nothing. Only the single sprite is blanked, so vanilla double copper chests keep their vanilla halves, and single vanilla copper chests are drawn with this patch's copper chest instead. Nothing here overlaps the trapped-chest sprite the More Chest Variants patch uses, so both patches can be installed together.
 
 ## Chest screens
 

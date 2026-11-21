@@ -3,6 +3,7 @@ package eu.pb4.ironchestpatch;
 import com.gathertocraft.ironchest.IronChestsCommon;
 import com.gathertocraft.ironcore.IronCoreCommon;
 import eu.pb4.ironchestpatch.impl.PolymerTabs;
+import eu.pb4.ironchestpatch.impl.VanillaCopperChests;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -30,6 +31,11 @@ public final class IronChestsPolymerPatch implements ModInitializer {
             LOGGER.warn("Iron Core Utilities assets were not found on the classpath; names and icons will be missing from the pack.");
         }
 
+
+        // The chests themselves are display entities; this is what lets them stand on a
+        // chest-shaped vanilla block without the client drawing a chest on top of them.
+        PolymerResourcePackUtils.RESOURCE_PACK_CREATION_EVENT.register(VanillaCopperChests::write);
+        VanillaCopperChests.register();
 
         // A tab icon is an item stack, and item components only exist once the registries are
         // bound, so the client-side icons are swapped in when the server starts.

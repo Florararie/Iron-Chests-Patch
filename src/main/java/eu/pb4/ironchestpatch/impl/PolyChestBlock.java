@@ -13,14 +13,15 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Shows a chest on unmodded clients as a barrier plus a display entity holding the chest model.
+ * Shows a chest on unmodded clients as a vanilla copper chest plus a display entity holding the
+ * chest model.
  *
  * <p>The previous carrier was a note block whose blockstate was patched into the pack to draw the
  * chest model. That put the chest art in the block renderer, which has two consequences the resource
@@ -28,19 +29,21 @@ import org.jspecify.annotations.Nullable;
  * in the chest model is a window into a missing face, and two touching carriers fight over the shared
  * face plane.
  *
- * <p>Here the client block is a barrier: invisible, solid (so it still collides and still takes the
- * click that opens the menu) and non-occluding (so neighbours keep their faces). The chest itself is a
- * display entity showing the mod's own chest item model, which means the real chest with its lid and
- * latch at its real proportions, and an entity has no neighbour culling at all.
+ * <p>Here the client block is a single waxed copper chest, chosen in {@link ChestCarrier} for its
+ * chest-shaped collision and its fluid state, with the single sprite blanked in the pack so the
+ * client's own chest entity draws nothing. It still takes the click that opens the menu, and a
+ * waterlogged chest still shows its water. The chest itself is a display entity showing the mod's
+ * own chest item model, which means the real chest with its lid and latch at its real proportions,
+ * and an entity has no neighbour culling at all.
  *
  * <p>The lid is animated by swapping the item model rather than by a block entity renderer: the
  * vanilla chest item model takes an {@code openness} angle, so the patch ships one model per lid
  * position and the entity picks the one matching the chest's current openness each tick. A closed
  * chest uses the mod's own item model, so nothing is duplicated for the common case.
  *
- * <p>Trade-off: the client draws break progress for its own block, and a barrier draws no cracks, so
- * mining a chest shows no cracking overlay until it pops. The server still tracks and applies the
- * break normally.
+ * <p>Trade-off: the client draws break progress for its own block, and a chest's block model has no
+ * geometry, so mining a chest shows no cracking overlay until it pops. The server still tracks and
+ * applies the break normally.
  */
 public record PolyChestBlock(ChestTypes type) implements PolymerBlock, BlockWithElementHolder {
     /**
@@ -57,7 +60,9 @@ public record PolyChestBlock(ChestTypes type) implements PolymerBlock, BlockWith
 
     @Override
     public BlockState getPolymerBlockState(BlockState state, @Nullable PacketContext context) {
-        return Blocks.BARRIER.defaultBlockState();
+        // The display entity turns the model, so the carrier only supplies the chest shape and the
+        // fluid state, and it is always single so the client asks for the sprite the pack blanks.
+        return ChestCarrier.of(state);
     }
 
     @Override
@@ -67,6 +72,12 @@ public record PolyChestBlock(ChestTypes type) implements PolymerBlock, BlockWith
 
     @Override
     public @Nullable ElementHolder createElementHolder(ServerLevel world, BlockPos pos, BlockState initialState) {
+        if (initialState.hasProperty(ChestBlock.TYPE)
+                && initialState.getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
+            // Only singles are blanked, so a half chest is still drawn by vanilla; drawing it here
+            // as well would show a whole chest on each half.
+            return null;
+        }
         return new ChestHolder(world, pos, this, this.model(initialState, 0));
     }
 
@@ -108,6 +119,7 @@ public record PolyChestBlock(ChestTypes type) implements PolymerBlock, BlockWith
         private final PolyChestBlock chest;
         private final ItemDisplayElement element;
         private int step;
+        private boolean shown = true;
 
         ChestHolder(ServerLevel world, BlockPos pos, PolyChestBlock chest, ItemDisplayElement element) {
             this.world = world;
@@ -125,12 +137,34 @@ public record PolyChestBlock(ChestTypes type) implements PolymerBlock, BlockWith
          */
         @Override
         protected void onTick() {
+            // A single vanilla copper chest can grow into a double one. Polymer keeps this holder
+            // then, because the block itself did not change, and the half now draws its own art, so
+            // the display has to stop drawing a whole chest over it.
+            if (this.isHalf()) {
+                if (this.shown) {
+                    this.shown = false;
+                    this.element.setItem(ItemStack.EMPTY);
+                }
+                return;
+            }
+            if (!this.shown) {
+                this.shown = true;
+                this.step = 0;
+                this.element.setItem(this.chest.stack(0));
+            }
+
             int target = this.isOpen() ? OPEN_STEPS : 0;
             if (this.step == target) {
                 return;
             }
             this.step += Integer.signum(target - this.step);
             this.element.setItem(this.chest.stack(this.step));
+        }
+
+        /** Vanilla copper chests form doubles; the mod's own chests are always single. */
+        private boolean isHalf() {
+            BlockState state = this.world.getBlockState(this.pos);
+            return state.hasProperty(ChestBlock.TYPE) && state.getValue(ChestBlock.TYPE) != ChestType.SINGLE;
         }
 
         /**
