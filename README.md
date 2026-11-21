@@ -6,6 +6,8 @@ A server-side [Polymer](https://modrinth.com/mod/polymer) patch for [Iron Chests
 
 Chests are a virtual display entity. The block clients see is a single waxed copper chest, which gives them a chest's collision box and its fluid state, so they collide exactly like chests and show water around them when waterlogged; the pack blanks that one sprite so the client's own chest draws nothing. Only the single sprite is blanked, so vanilla double copper chests keep their vanilla halves, and single vanilla copper chests are drawn with this patch's copper chest instead. Nothing here overlaps the trapped-chest sprite the More Chest Variants patch uses, so both patches can be installed together.
 
+A crystal chest shows what is in it. The first twelve non-empty stacks are item display entities floating inside its box, where the mod's own renderer puts them, turning one degree a tick. They follow the inventory, so emptying a slot brings the next stack forward.
+
 ## Chest screens
 
 Iron Chests' wide menu is replaced by a normal-height vanilla chest menu. A page is a whole number of rows: Christmas 3, copper 5, iron 6, and the larger chests are paged at 27, 36 and 42 slots. Shift-click, drag distribution and quick-move use the vanilla slot logic, so the dirt chest's filter still applies.
@@ -25,9 +27,5 @@ gradle build
 ```
 
 The jar lands in `build/libs/`. The patched mods come from CurseForge's maven; their file ids are in `gradle.properties`.
-
-## Notes
-
-- The crystal chest's contents are not visible.
 
 Chest art comes from Iron Chests. This patch is MIT licensed; see `LICENSE`.
